@@ -37,6 +37,16 @@ declare module "next-auth/jwt" {
   }
 }
 
+
+interface AccessToken {
+  token_type: 'Bearer',
+  scope: string;
+  expires_in: number;
+  ext_expires_in: number;
+  access_token: string;
+  refresh_token: string;
+  id_token: string;
+}
 const getAccessTokenFromRefreshToken = async (refreshToken: string) => {
   const response = await fetch(
     `https://login.microsoftonline.com/${env.AZURE_AD_TENANT_ID}/oauth2/v2.0/token`,
@@ -54,7 +64,7 @@ const getAccessTokenFromRefreshToken = async (refreshToken: string) => {
       }),
     }
   );
-  return response.json();
+  return response.json() as Promise<AccessToken>;
 };
 
 
@@ -67,7 +77,7 @@ const getAccessTokenFromRefreshToken = async (refreshToken: string) => {
 export const authOptions: NextAuthOptions = {
   // Include user.id and access tokens on session
   callbacks: {
-    async session({ session, token }) {
+    session({ session, token }) {
       // TODO: check if tokens are synced with jwt
       if (session.user) {
         const { accessToken, refreshToken, accessTokenExpires } = token;
@@ -80,18 +90,16 @@ export const authOptions: NextAuthOptions = {
       // at sign in
       if (account && user) {
         // check if user exists in db, if not create it
-        const newUser = await prisma.user
+        await prisma.user
           .create({
             data: {
               id: user.id,
               name: user.name,
               email: user.email,
               image: user.image,
-              refresh_token: account.refresh_token,
             },
           })
-          .then((newUser) => newUser.id)
-          .catch(() => null);
+          .catch(() => { /* user already exists */ });
 
         return {
           ...token,

@@ -1,7 +1,7 @@
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
-import { FluentProvider, webDarkTheme, webLightTheme } from "@fluentui/react-components";
+import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 
 import { api } from "../utils/api";
 
@@ -12,7 +12,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <FluentProvider theme={webDarkTheme}>
+    <FluentProvider theme={webLightTheme}>
       <SessionProvider session={session}>
         <Component {...pageProps} />
       </SessionProvider>

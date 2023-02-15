@@ -7,6 +7,25 @@ import {
     TableHeader,
     TableHeaderCell,
 } from "@fluentui/react-components";
+import { type GetServerSideProps } from "next";
+import { getToken } from "next-auth/jwt";
+
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const token = await getToken({ req: context.req });
+
+    if (!token) {
+        return {
+            redirect: {
+                destination: "/api/auth/signin",
+                permanent: false,
+            },
+        };
+    }
+    return {
+        props: {},
+    };
+};
 
 const Test = () => {
     const { data: messages } = api.msgraph.getAllMessages.useQuery();

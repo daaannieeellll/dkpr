@@ -45,7 +45,7 @@ export const msgraphRouter = createTRPCRouter({
                 const client = Client.init({
                     authProvider: (done) => done(null, accessToken),
                 });
-                interface Response { "@odata.context": string; "@odata.nextLink": string; value: Message[] };
+                interface Response { "@odata.context": string; "@odata.nextLink": string; value: Message[] }
                 const { value, ...odata } = await client.api("/me/messages")
                     .select([
                         "from",
@@ -58,7 +58,7 @@ export const msgraphRouter = createTRPCRouter({
                 let { "@odata.nextLink": nextLink } = odata;
                 while (nextLink) {
                     console.log(nextLink);
-                    const next: Response = await client.api(nextLink).get();
+                    const next = await client.api(nextLink).get() as Response;
                     value.push(...next.value);
                     nextLink = next["@odata.nextLink"];
                 }

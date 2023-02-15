@@ -2,7 +2,7 @@ import { getToken, } from "next-auth/jwt";
 import { Client } from "@microsoft/microsoft-graph-client";
 
 import type { NextApiRequest, NextApiResponse } from "next"
-import { Message } from "@microsoft/microsoft-graph-types";
+import type { Message } from "@microsoft/microsoft-graph-types";
 
 export default async function handler(
     req: NextApiRequest,
@@ -19,7 +19,7 @@ export default async function handler(
             authProvider: (done) => done(null, accessToken),
         });
 
-        interface Response { "@odata.context": string; "@odata.nextLink": string; value: Message[] };
+        interface Response { "@odata.context": string; "@odata.nextLink": string; value: Message[] }
         const { value, ...odata } = await client.api("/me/messages")
             .select([
                 "subject",
@@ -33,7 +33,7 @@ export default async function handler(
         let { "@odata.nextLink": nextLink } = odata;
         while (nextLink) {
             console.log(nextLink);
-            const next: Response = await client.api(nextLink).get();
+            const next = await client.api(nextLink).get() as Response;
             value.push(...next.value);
             nextLink = next["@odata.nextLink"];
         }

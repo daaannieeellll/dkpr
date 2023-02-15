@@ -2,6 +2,7 @@ import { createTRPCRouter } from "./trpc";
 import { authRouter } from "./routers/auth";
 import { exampleRouter } from "./routers/example";
 import { msgraphRouter } from "./routers/msgraph";
+import { urlsRouter } from "./routers/urls";
 
 /**
  * This is the primary router for your server.
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   auth: authRouter,
   example: exampleRouter,
   msgraph: msgraphRouter,
+  urls: urlsRouter,
 });
 
 // export type definition of API
