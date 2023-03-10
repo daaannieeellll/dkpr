@@ -1,3 +1,4 @@
+import AliasListItem from "../../components/aliasListItem";
 import { api } from "../../utils/api";
 
 const Admin = () => {
@@ -32,25 +33,11 @@ const Admin = () => {
                 </form>
             </section>
 
-            <section>
-                <h2>Short URLs</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Slug</th>
-                            <th>URL</th>
-                            <th>Visits</th>
-                        </tr>
-                    </thead>
-                    {data && data.map((url) => (
-                        <tr key={url.slug}>
-                            <td>{`${url.slug}`}</td>
-                            <td>{url.url}</td>
-                            <td>{url.clicks.length}</td>
-                        </tr>
-                    ))
-                    }
-                </table>
+            <section className="divide-y divide-gray-300">
+                {data && data
+                    .map((shortUrl, idx) => (
+                        <AliasListItem key={idx} shortUrl={shortUrl} />
+                    ))}
             </section>
         </div>
     );

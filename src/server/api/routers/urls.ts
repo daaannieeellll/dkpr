@@ -17,22 +17,10 @@ export const urlsRouter = createTRPCRouter({
                 },
             })
         }),
-    click: publicProcedure
-        .input(z.object({ slug: z.string(), ip: z.string(), userAgent: z.string() }))
-        .mutation(async ({ ctx, input }) => {
-            return ctx.prisma.shortUrlClick.create({
-                data: {
-                    shortUrlSlug: input.slug,
-                }
-            });
-        }),
     getAllURLs: protectedProcedure.query(({ ctx }) => {
         return ctx.prisma.shortUrl.findMany({
             where: {
                 userId: ctx.session.user.id,
-            },
-            include: {
-                clicks: true,
             },
         })
     }),
