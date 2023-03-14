@@ -7,10 +7,6 @@ generator client {
 
 datasource db {
     provider     = "mysql"
-    // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url          = env("DATABASE_URL")
     relationMode = "prisma"
 }
@@ -30,25 +26,28 @@ model User {
 }
 
 model ShortUrl {
-    slug      String          @id
+    slug      String   @id
     url       String
     userId    String?
-    createdAt DateTime        @default(now())
-    clicks    ShortUrlClick[]
+    createdAt DateTime @default(now())
 
     User User? @relation(fields: [userId], references: [id])
 
     @@index([userId])
 }
 
-model ShortUrlClick {
-    id           String   @id @default(cuid())
-    shortUrlSlug String?
-    timestamp    DateTime @default(now())
-    ip           String?
-    userAgent    String?
+model QuoteAuthor {
+    id     Int     @id @default(autoincrement())
+    name   String  @unique
+    quotes Quote[]
+}
 
-    ShortUrl ShortUrl? @relation(fields: [shortUrlSlug], references: [slug])
+model Quote {
+    id        Int         @id @default(autoincrement())
+    authorId  Int
+    quote     String
+    createdAt DateTime    @default(now())
+    author    QuoteAuthor @relation(fields: [authorId], references: [id])
 
-    @@index([shortUrlSlug])
+    @@index([authorId])
 }

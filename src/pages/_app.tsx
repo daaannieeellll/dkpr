@@ -1,22 +1,30 @@
-import { type AppType } from "next/app";
+import { type NextPage } from "next";
+import { type AppProps } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
-import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 
 import { api } from "../utils/api";
 
 import "../styles/globals.css";
 
-const MyApp: AppType<{ session: Session | null }> = ({
+export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: React.ReactElement) => React.ReactNode;
+};
+
+type AppPropsWithLayout<P = object> = AppProps<P> & {
+  Component: NextPageWithLayout;
+};
+
+const MyApp = ({
   Component,
   pageProps: { session, ...pageProps },
-}) => {
+}: AppPropsWithLayout<{ session: Session | null }>) => {
+  const getLayout = Component.getLayout ?? ((page: React.ReactNode) => page);
+
   return (
-    <FluentProvider theme={webLightTheme}>
-      <SessionProvider session={session}>
-        <Component {...pageProps} />
-      </SessionProvider>
-    </FluentProvider>
+    <SessionProvider session={session}>
+      {getLayout(<Component {...pageProps} />)}
+    </SessionProvider>
   );
 };
 
