@@ -6,6 +6,8 @@ export const quotesRouter = createTRPCRouter({
         .input(z.object({
             quote: z.string().min(1),
             author: z.string().min(1),
+            latitude: z.number().min(-90).max(90),
+            longitude: z.number().min(-180).max(180),
         }))
         .mutation(async ({ ctx, input }) => {
             return ctx.prisma.quote.create({
@@ -17,6 +19,21 @@ export const quotesRouter = createTRPCRouter({
                             create: { name: input.author },
                         }
                     },
+                    location: {
+                        connectOrCreate: {
+                            where: {
+                                lat_lng: {
+                                    lat: input.latitude,
+                                    lng: input.longitude
+                                }
+                            },
+                            create: {
+                                lat: input.latitude,
+                                lng: input.longitude,
+                            }
+                        }
+                    }
+
                 },
             })
         }),

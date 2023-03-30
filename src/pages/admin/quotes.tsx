@@ -23,23 +23,40 @@ const getDateString = (date: Date, id?: number) => {
   return date.toLocaleDateString("nl-NL", options);
 };
 
+function getCurrentPosition(options = {}) {
+  return new Promise<GeolocationPosition>((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, options);
+  });
+}
+
 const QuotesPage: NextPageWithLayout = () => {
   const { data: quotes } = api.quotes.getAllQuotes.useQuery();
   const createQuote = api.quotes.createQuote.useMutation();
+
   return (
     <>
       <section className="font-code text-white">
         <h2 className="text-lg font-medium">Create a new quote</h2>
         <form
           className="flex flex-col gap-2"
-          onSubmit={(e) => {
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          onSubmit={async (e) => {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
             const author = formData.get("author") as string;
             const quote = formData.get("quote") as string;
+            const {
+              coords: { latitude, longitude },
+            } = await getCurrentPosition({
+              enableHighAccuracy: true,
+              timeout: 5000,
+              maximumAge: 0,
+            });
+
             if (author && quote) {
-              createQuote.mutate({ author, quote });
+              createQuote.mutate({ author, quote, latitude, longitude });
             }
+            window.location.reload();
           }}
         >
           <label htmlFor="author">Author</label>

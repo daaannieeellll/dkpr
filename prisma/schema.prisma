@@ -43,11 +43,24 @@ model QuoteAuthor {
 }
 
 model Quote {
-    id        Int         @id @default(autoincrement())
-    authorId  Int
-    quote     String
-    createdAt DateTime    @default(now())
-    author    QuoteAuthor @relation(fields: [authorId], references: [id])
+    id         Int         @id @default(autoincrement())
+    authorId   Int
+    quote      String
+    createdAt  DateTime    @default(now())
+    author     QuoteAuthor @relation(fields: [authorId], references: [id])
+    locationId String?
+    location   Location?   @relation(fields: [locationId], references: [id])
 
     @@index([authorId])
+    @@index([locationId])
+}
+
+model Location {
+    id    String  @id @default(uuid())
+    lat   Float
+    lng   Float
+    Quote Quote[]
+
+    @@unique([lat, lng])
+    @@index([lat, lng], name: "lat_lng")
 }
