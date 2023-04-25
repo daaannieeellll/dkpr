@@ -56,10 +56,11 @@ model Quote {
 }
 
 model Location {
-    id    String  @id @default(uuid())
-    lat   Float
-    lng   Float
-    Quote Quote[]
+    id     String  @id @default(uuid())
+    lat    Float
+    lng    Float
+    string String?
+    Quote  Quote[]
 
     @@unique([lat, lng])
     @@index([lat, lng], name: "lat_lng")

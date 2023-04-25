@@ -10,6 +10,26 @@ export const quotesRouter = createTRPCRouter({
             longitude: z.number().min(-180).max(180),
         }))
         .mutation(async ({ ctx, input }) => {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${input.latitude}&lon=${input.longitude}&addressdetails=1`);
+            const { address } = await response.json() as {address: {
+                building?: string;
+                amenity?: string;
+                railway?: string;
+                house_number?: string;
+                road: string;
+                city?: string;
+                county?: string;
+                village?: string;
+                town?: string;
+                country: string;
+            }};
+            const locationString = [
+                address.building ?? address.amenity ?? (address.railway !== address.road ? address.railway : "") ?? "",
+                address.house_number ? address.road + " " + address.house_number : address.road,
+                address.village ?? address.town ?? address.city ?? "",
+                address.country,
+            ].filter((part) => part.length > 0).join(", ");
+
             return ctx.prisma.quote.create({
                 data: {
                     quote: input.quote,
@@ -25,11 +45,12 @@ export const quotesRouter = createTRPCRouter({
                                 lat_lng: {
                                     lat: input.latitude,
                                     lng: input.longitude
-                                }
+                                },
                             },
                             create: {
                                 lat: input.latitude,
                                 lng: input.longitude,
+                                string: locationString,
                             }
                         }
                     }
@@ -93,6 +114,6 @@ export const quotesRouter = createTRPCRouter({
             // });
         }),
     getAllQuotes: protectedProcedure.query(({ ctx }) => {
-        return ctx.prisma.quote.findMany({ include: { author: true } })
+        return ctx.prisma.quote.findMany({ include: { author: true, location: true } })
     }),
 });

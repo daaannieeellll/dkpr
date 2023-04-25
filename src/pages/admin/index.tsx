@@ -5,7 +5,7 @@ const Admin: NextPageWithLayout = () => {
   return (
     <div className="text-white">
       <section>
-        <h1 className="text-xl font-bold">Admin Dashboard</h1>
+        <h1 className="font-code text-xl">Admin Dashboard</h1>
       </section>
     </div>
   );

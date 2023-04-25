@@ -1,6 +1,6 @@
 import AdminLayout from "../../components/layouts/admin";
 import { api } from "../../utils/api";
-import { NextPageWithLayout } from "../_app";
+import { type NextPageWithLayout } from "../_app";
 
 const isMatchingDate = (date: Date, id: number) =>
   date.getMilliseconds() === id &&
@@ -83,14 +83,16 @@ const QuotesPage: NextPageWithLayout = () => {
         <div className="divide-y divide-neutral-800">
           {quotes &&
             quotes
-              .map((item) => {
-                const { id, quote, author, createdAt } = item;
+              .map((item, idx) => {
+                const { id, quote, author, createdAt, location } = item;
                 const dateString = getDateString(createdAt, id - 1);
 
                 return (
                   <>
                     <p key={id} className="py-3">
-                      {`${id}. "${quote}" -${author.name}, ${dateString}`}
+                      {`${idx + 1}. "${quote}" -${author.name}, ${dateString}${
+                        location?.string ? ` (${location?.string})` : ""
+                      }`}
                     </p>
                   </>
                 );
