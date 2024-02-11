@@ -13,7 +13,7 @@ interface AdminLayoutProps {
 
 const items = [
   { Icon: AdjustmentsHorizontalIcon, href: "/admin/slugs" },
-  { Icon: Bars3BottomLeftIcon, href: "/admin/quotes" },
+  // { Icon: Bars3BottomLeftIcon, href: "/admin/quotes" },
   { Icon: HomeIcon, href: "/admin" },
 ];
 

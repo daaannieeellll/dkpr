@@ -31,7 +31,7 @@ const AliasListItem = ({ shortUrl }: AliasListItemProps) => {
         {url}
       </a>
       <div className="flex flex-row justify-between">
-        <a href={slug} className="text-teal-300/75">
+        <a href={`${host}${slug}`} className="text-teal-300/75">
           {host}
           <span className="font-bold">{slug}</span>
         </a>
